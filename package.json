@@ -1,0 +1,27 @@
+{
+  "name": "nasa-images",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1", 
+    "start" : "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaelsoriano/nasa-images.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michaelsoriano/nasa-images/issues"
+  },
+  "homepage": "https://github.com/michaelsoriano/nasa-images#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "dotenv": "^6.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  }
+}

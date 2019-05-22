@@ -1,0 +1,118 @@
+<template id="home-template">
+    <div>    
+      <header-area></header-area>
+        <div class="d-flex align-items-stretch">
+          <sidebar 
+          v-bind:by-center-collapsed="byCenterCollapsed"
+          v-bind:by-photographer-collapsed="byPhotographerCollapsed"></sidebar>
+            <div v-bind:class="{ 'page-content' : true, active : $root.sidebarExpand  }">             
+              <page-header v-bind:bc-title="bcTitle"></page-header>
+              <section class="no-padding-top">
+                <div class="container-fluid">
+                  <div v-if="$root.errormsg" class="error-msg col-lg-12">{{$root.errormsg}}</div> 
+                  <div v-else class="col-lg-8 container block apods" v-on:click="$root.searchVisible=true">
+                    <h3>Welcome to NASA Images</h3>
+                    <p>Browse through some of the world's most fascinating space photos. The images and data on this site is coming from the <a href="https://api.nasa.gov/">NASA API</a>. Please note that API rate limits may apply.</p>
+                    <div v-if="$root.apods.url" :style="{ background: 'url(\'' + $root.apods.url + '\')' }" class="apodMain">
+                        <div class="apodTitle">
+                          <small>Astronomy Picture of the Day</small>
+                          <h5>{{$root.apods.title}}</h5>
+                        </div>
+                    </div>
+                    <p class="explanation">
+                     {{$root.apods.explanation}}
+                     <span v-if="$root.apods.copyright">Copyright: {{$root.apods.copyright}}</span>
+                    </p>
+                  </div>   
+                </div>
+            </section>
+              <footer-area></footer-area>          
+            </div>
+        </div> 
+    </div>
+  </template>
+
+  <template id="single-template">
+     <div class="single">   
+          <div v-if="!singleItem.data" class="loading"></div>
+          <header-area></header-area>
+            <div class="d-flex align-items-stretch">
+              <sidebar 
+                v-bind:by-center-collapsed="byCenterCollapsed"
+                v-bind:by-photographer-collapsed="byPhotographerCollapsed"></sidebar>
+                <div v-bind:class="{ 'page-content' : true, active : $root.sidebarExpand  }">             
+                  <page-header></page-header>
+                  <content-area></content-area>  
+                  <footer-area></footer-area>          
+                </div>
+            </div> 
+         <!--modal-->       
+         
+          <div v-if="singleItem.data" class="modal single-item-modal" style="display:block;">
+                <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                <div class="modal-header">      
+                <h4 class="modal-title">{{singleItem.data.items[0].data[0].title}}</h4>
+                <button v-on:click="closeModal" 
+                  type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <a href="#" class="previous" v-bind:style="{ top: topPos }" v-on:click.prevent="goPrevious" v-if="prevGuy !== 'undefined'">
+                      <img src="/public/images/left-arrow.png">
+                    </a>
+                    <a href="#" class="next" v-bind:style="{ top: topPos }" v-on:click.prevent="goNext" v-if="nextGuy !== 'undefined'">
+                        <img src="/public/images/right-arrow.png">
+                    </a>
+                    <div class="desc" v-html="singleItem.data.items[0].data[0].description"></div> 
+                    <img v-bind:src="singleItem.data.items[0].links[0].href" class="the-photo" />
+                    <div class="meta-data">
+                      <ul>                        
+                        <li v-if="singleItem.data.items[0].data[0].photographer">
+                          Photographer: 
+                          <span class="value">{{singleItem.data.items[0].data[0].photographer}}
+                          </span></li>
+                        <li>Center: <span class="value">{{singleItem.data.items[0].data[0].center}}</span></li>
+                        <li>Created: <span class="value">{{convertDate(singleItem.data.items[0].data[0].date_created)}}</span></li>                       
+                        <li>Keywords: 
+                          <span v-for="(keyword,keywordindex) in singleItem.data.items[0].data[0].keywords" 
+                            class="value" :key="keywordindex">
+                            {{keyword}},&nbsp;
+                          </span>
+                        </li>
+                      </ul>    
+                    </div>                    
+                    <div class="assets">
+                      <ul>
+                        <li v-if="extIsNotJson(ass.href)" v-for="ass in singleItem.data.assets.items">
+                          <a target="_blank" v-bind:href="ass.href">{{ass.href}}</a>
+                        </li>
+                      </ul>
+                    </div>                    
+                </div>         
+                </div>
+                </div>
+          </div>    
+          <!--end modal-->     
+      </div>
+  </template>
+
+  <template id="search-template">
+      <div> 
+        <div v-if="$root.showLoading" class="loading"></div>
+          <keywords 
+            v-bind:show-keywords="$root.showKeywords"
+            v-bind:keywords="$root.filtersByKeyword"></keywords>
+          <header-area></header-area>
+          <div class="d-flex align-items-stretch">
+              <sidebar 
+                v-bind:by-center-collapsed="byCenterCollapsed"
+                v-bind:by-photographer-collapsed="byPhotographerCollapsed"></sidebar>
+              <div v-bind:class="{ 'page-content' : true, active : $root.sidebarExpand  }">       
+                <page-header v-bind:bc-title="bcTitle"></page-header>
+                <content-area v-bind:errormsg="errormsg"></content-area>  
+                <footer-area></footer-area>          
+              </div>
+          </div> 
+      </div>
+    </template>
+  

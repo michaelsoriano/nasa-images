@@ -1,0 +1,160 @@
+<template id="page-header-template">
+    <div>
+        <!-- Breadcrumb-->
+        <div class="container-fluid">   
+          <ul class="breadcrumb"> 
+            <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>            
+            <li v-if="bcTitle" class="breadcrumb-item active">{{bcTitle}}</li>
+          </ul>
+        </div>
+    </div>
+  </template>
+  <template id="sidebar-template">
+      <nav id="sidebar" v-bind:class="{ shrinked: $root.sidebarExpand }">          
+          <span class="heading">Main</span>
+          <ul class="list-unstyled">
+                  <li><router-link :to="{path:'/'}"> <i class="icon-home"></i>Home </router-link></li>
+                  <!--class="active"-->
+                  <li>
+                    <a href="#" v-bind:class="$route.name == 'search' ? 'router-link-exact-active' : ''" v-on:click.prevent="$root.searchVisible=true" >
+                        <i class="fa fa-search"></i>Search </a>                       
+                  </li>
+                  <!--BY CENTER-->
+                  <li v-if="$root.filtersByCenter.length > 0">
+                    <a
+                      v-if="byCenterCollapsed"
+                      v-on:click="$parent.byCenterCollapsed=false" 
+                      v-bind:aria-expanded="byCenterCollapsed" 
+                      v-bind:class="{collapsed : byCenterCollapsed}"
+                      href="#" data-toggle="collapse">
+                      <i class="fa fa-cube"></i>By Center </a>
+                    <a
+                      v-else
+                      v-on:click="$parent.byCenterCollapsed=true" 
+                      v-bind:aria-expanded="byCenterCollapsed" 
+                      v-bind:class="{collapsed : byCenterCollapsed}"
+                      href="#" data-toggle="collapse">
+                      <i class="fa fa-cube"></i>By Center </a>
+
+                    <ul v-bind:class="{show : byCenterCollapsed, 'list-unstyled' : true, collapse : true}">
+                        <li 
+                          v-for="(filterBC, filterBCIndex) in $root.filtersByCenter"
+                          :key="filterBCIndex">
+                          <router-link :to="{ path: $root.getFilterLink(filterBC,'center')}">{{filterBC}}</router-link>
+                          <!-- <router-link :to="{ path: '/search/&center=' + filterBC }">{{filterBC}}</router-link> -->
+                        </li>
+                    </ul>
+                  </li>
+                  <!--END BY CENTER-->                  
+                  <!--BY PHOTOGRAPHER-->
+                  <li v-if="$root.filtersByPhotographer.length > 0">
+                    <a
+                      v-if="byPhotographerCollapsed"
+                      v-on:click="$parent.byPhotographerCollapsed=false" 
+                      v-bind:aria-expanded="byPhotographerCollapsed" 
+                      v-bind:class="{collapsed : byPhotographerCollapsed}"
+                      href="#" data-toggle="collapse">
+                      <i class="fa fa-camera"></i>By Photographer</a>
+                    <a
+                      v-else
+                      v-on:click="$parent.byPhotographerCollapsed=true" 
+                      v-bind:aria-expanded="byPhotographerCollapsed" 
+                      v-bind:class="{collapsed : byPhotographerCollapsed}"
+                      href="#" data-toggle="collapse">
+                      <i class="fa fa-camera"></i>By Photographer</a>
+
+                    <ul v-bind:class="{show : byPhotographerCollapsed, 'list-unstyled' : true, collapse : true}">
+                        <li 
+                          v-for="(filterBP, filterBPIndex) in $root.filtersByPhotographer"
+                          :key="filterBPIndex">
+                          <router-link :to="{ path: $root.getFilterLink(filterBP,'photographer')}">{{filterBP}}</router-link>
+                        </li>
+                    </ul>
+                  </li>
+                  <!--END BY PHOTOGRAPHER-->    
+                  <li v-if="$root.filtersByKeyword.length > 0">
+                      <a href="#" 
+                        v-on:click.prevent="$root.showKeywords=true">
+                        <i class="fa fa-key"></i>By Keywords</a>                    
+                  </li>  
+          </ul><span class="heading">Popular</span>
+          <ul class="list-unstyled">
+            <li>
+              <router-link :to="{ name: 'search', params: { term: 'moon' }}">
+                <i class="fa fa-moon-o"></i>Moon
+            </li>
+            <li> 
+                <router-link :to="{ name: 'search', params: { term: 'rockets' }}">
+                  <i class="fa fa-rocket"></i>Rockets 
+                </router-link>
+            </li>           
+            <li> 
+                <router-link :to="{ name: 'search', params: { term: 'earth' }}">
+                  <i class="fa fa-globe"></i>Earth
+                </router-link>
+            </li>
+            <li>
+                <router-link :to="{ name: 'search', params: { term: 'space shuttles' }}">
+                  <i class="fa fa-space-shuttle"></i>Space Shuttles 
+                </router-link>
+              </li>
+            <!--https://fontawesome.bootstrapcheatsheets.com/-->
+          </ul>
+      </nav>
+  </template>
+  <template id="content-area-template">
+    <section class="no-padding-top">
+        <div class="container-fluid">
+          <div v-if="errormsg" class="error-msg col-lg-12">{{errormsg}}</div> 
+          <div class="row">            
+            <!--EACH ITEM-->
+            <result-item  
+              v-for="(item, index) in $root.items"
+              v-bind:item="item"    
+              v-bind:key="item.data[0].nasa_id"           
+              >
+            </result-item>                
+          </div>
+        </div>
+    </section>
+  </template>
+  <template id="result-item-template">
+    <transition name="fade">
+    <router-link
+      v-bind:to="{ name: 'single', params: { id: item.data[0].nasa_id}}" 
+      v-bind:id="item.data[0].nasa_id"  
+      class="col-xl-3 col-lg-3 col-md-3 col-sm-4">
+      <div class="block margin-bottom-sm">    
+        <div class="title"><strong>{{item.data[0].title}}</strong></div>
+        <div class="description">{{item.data[0].description}}</div>   
+        <div v-if="item.links" class="thumbnail-wrap">
+            <div :style="{ background: 'url(\'' + item.links[0].href + '\')' }" 
+              class="thumbnail">
+            </div>
+        </div>             
+      </div>
+    </router-link>
+    </transition>
+  </template>
+  <template id="keywords-template">
+      <div v-if="showKeywords" class="modal keywords-modal">
+          <div class="modal-dialog modal-dialog modal-lg">
+          <div class="modal-content">
+          <div class="modal-header">      
+          <h4 class="modal-title">Keywords:</h4>
+          <button v-on:click="$root.showKeywords=false" type="button" class="close" data-dismiss="modal">
+              &times;</button>
+          </div>
+          <div class="modal-body">
+             <div class="row">
+                <div v-for="(keyword,index) in keywords" class="col-lg-3 keyword" :key="index">
+                    <router-link :to="{ path: $root.getFilterLink(keyword,'keywords')}"
+                      v-on:click.native="keywordSelected"
+                    >{{keyword}}</router-link>
+                </div>
+             </div>
+          </div>         
+          </div>
+          </div>
+    </div>
+  </template>

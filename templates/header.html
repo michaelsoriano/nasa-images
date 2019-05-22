@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head> 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>NASA Images</title>
+    <meta name="description" content="A collection of the world's best space images from NASA">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+ 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,700"> 
+    <link rel="stylesheet" href="/public/main.css">   
+	<!--github version-->
+	
+  </head>
+  <body>   
+  <router-view id="app" v-bind:single-item="singleItem">
+  </router-view>
+  <template id="header-template">
+    <header class="header">   
+        <nav class="navbar navbar-expand-lg">   
+          <!-- <transition name="fade"> -->
+          <div class="search-panel" v-if="$root.searchVisible">
+            <div class="search-inner d-flex align-items-center justify-content-center">
+              <div class="close-btn" v-on:click="$root.searchVisible=false">Close <i class="fa fa-close"></i></div>
+              <form id="searchForm" action="#">
+                <div class="form-group">
+                  <input v-model.trim="$root.searchTerm" type="search" name="search" placeholder="e.g. Pluto or Mars...">                  
+                  <router-link 
+                    class="submit" 
+                    v-bind:to="{ name: 'search', params: { term: $root.searchTerm}}"
+                    v-on:click.native="$root.searchVisible=false"  
+                    tag="button">Search</router-link>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- </transition> -->
+          <div class="container-fluid d-flex align-items-center justify-content-between">
+            <div class="navbar-header">
+              <!-- Navbar Header-->
+              <router-link :to="{path:'/'}" class="navbar-brand">
+                <img src="/public/images/logo.png" class="logo" />
+                <div class="brand-text brand-big visible text-uppercase">
+                  <strong class="text-primary">NASA</strong>
+                  <strong class="text-secondary">Images</strong></div>                
+                </router-link>
+              <!-- Sidebar Toggle Btn-->
+              <button class="sidebar-toggle" 
+                v-if="$root.sidebarExpand"
+                v-on:click="$root.sidebarExpand=false">
+                  <i class="fa fa-bars expanded"></i>
+              </button>
+              <button class="sidebar-toggle active" 
+                v-else
+                v-on:click="$root.sidebarExpand=true">
+                  <i class="fa fa-bars"></i>
+              </button>
+            </div>
+            <div class="right-menu list-inline no-margin-bottom">    
+              <div class="list-inline-item"><a v-on:click.prevent="$root.searchVisible=true" href="#" class="search-open nav-link">
+                <i class="icon-magnifying-glass-browser"></i> Search</a></div>                      
+            </div>
+          </div>
+        </nav>
+      </header>
+</template>
