@@ -18,3 +18,10 @@ npm start
 
 Open a browser and type in http://localhost:500 and you should see the site.
 
+## To start developing
+
+NASA images has nodemon so you can develop without having to manually restart your node server. Simply do: 
+
+```
+nodemon index.js
+```
